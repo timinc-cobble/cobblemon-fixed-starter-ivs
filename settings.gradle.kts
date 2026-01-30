@@ -1,4 +1,4 @@
-rootProject.name = "fixed-ivs"
+rootProject.name = "fixed-starter-ivs"
 
 pluginManagement {
     repositories {
