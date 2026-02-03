@@ -17,7 +17,7 @@ import us.timinc.mc.cobblemon.timcore.AbstractConfig
 import us.timinc.mc.cobblemon.timcore.AbstractMod
 import us.timinc.mc.cobblemon.timcore.event.ReloadConfigEvent
 
-const val MOD_ID: String = "fixed_ivs"
+const val MOD_ID: String = "fixed_starter_ivs"
 
 object FixedIvs : AbstractMod<FixedIvs.FixedIvsConfig>(MOD_ID, FixedIvsConfig::class.java) {
     class FixedIvsConfig : AbstractConfig() {

@@ -1,6 +1,6 @@
 # Fixed Starter IVs
 
-v1.7.2-1.1
+v1.7.3-1.1
 
 [Modrinth](https://modrinth.com/mod/cobblemon-fixedstarterivs)
 
@@ -15,11 +15,11 @@ v1.7.2-1.1
 ## Features
 
 - Allows you to configure how you would like to assign IVs for starter Pokémon.
-    - Simple - Set all IVs to a specific value.
-    - Range - Roll all IVs within a given range.
-    - Capped - Set a maximum number of IVs to maximum.
-    - Granular - Set each stat’s IV to a specific value individually.
-    - Granular Ranged - Roll each stat’s IV within a given range.
+  - Simple - Set all IVs to a specific value.
+  - Range - Roll all IVs within a given range.
+  - Capped - Set a maximum number of IVs to maximum.
+  - Granular - Set each stat’s IV to a specific value individually.
+  - Granular Ranged - Roll each stat’s IV within a given range.
 
 ## Dependencies
 
@@ -32,7 +32,7 @@ Run the game with the mod installed, start a new world, observe your perfect IVs
 
 ## Player Help
 
-[Config Options](https://www.notion.so/Config-Options-2f857e0d4afd80a2b953d775a02a73ea?pvs=21)
+[Config Options](https://www.notion.so/Config-Options-2fc57e0d4afd81a0a6c4fa1059117916?pvs=21)
 
 ## Known Issues
 
