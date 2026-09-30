@@ -1,7 +1,7 @@
 plugins {
+    id("com.gradleup.shadow") version "9.2.2"
     id("dev.architectury.loom")
     id("architectury-plugin")
-    id("com.gradleup.shadow") version("9.2.2")
 }
 
 architectury {
@@ -16,11 +16,9 @@ loom {
 
 repositories {
     mavenCentral()
-    maven("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
-    maven("https://maven.impactdev.net/repository/development/")
     maven("https://hub.spigotmc.org/nexus/content/groups/public/")
     maven("https://thedarkcolour.github.io/KotlinForForge/")
-    maven("https://maven.neoforged.net")
+    maven("https://maven.neoforged.net/releases/")
 }
 
 val shadowBundle = configurations.create("shadowBundle") {
@@ -35,15 +33,15 @@ dependencies {
 
     modImplementation("com.cobblemon:neoforge:${property("cobblemon_version")}") { isTransitive = false }
     //Needed for cobblemon
-    forgeRuntimeLibrary("thedarkcolour:kotlinforforge-neoforge:${property("kotlin_for_forge_version")}") {
+    implementation("thedarkcolour:kotlinforforge-neoforge:${property("kotlin_for_forge_version")}") {
         exclude("net.neoforged.fancymodloader", "loader")
     }
 
-    implementation(project(":common", configuration = "namedElements"))
-    "developmentNeoForge"(project(":common", configuration = "namedElements")) {
-        isTransitive = false
-    }
     shadowBundle(project(":common", configuration = "transformProductionNeoForge"))
+    project(":common", configuration = "namedElements").let {
+        implementation(it)
+        "developmentNeoForge"(it) { isTransitive = false }
+    }
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${property("junit_version")}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${property("junit_version")}")
@@ -51,23 +49,28 @@ dependencies {
     modImplementation("maven.modrinth:cobblemon-tim-core:${property("tim_core_neoforge_version")}")
 }
 
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
-}
-
-tasks.processResources {
-    inputs.property("version", project.version)
-
-    filesMatching("META-INF/neoforge.mods.toml") {
-        expand(project.properties)
-    }
-}
-
 tasks {
+    processResources {
+        inputs.property("version", project.version)
+
+        filesMatching("META-INF/neoforge.mods.toml") {
+            @Suppress("DEPRECATION", "We'll think about it when gradle 10 happens")
+            expand(project.properties)
+        }
+    }
 
     jar {
         archiveBaseName.set("${rootProject.property("archives_base_name")}-${project.name}")
         archiveClassifier.set("dev-slim")
+    }
+
+    sourcesJar {
+        val depSources = project(":common").tasks.sourcesJar
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        dependsOn(depSources)
+        from(depSources.get().archiveFile.map { zipTree(it) }) {
+            exclude("architectury.accessWidener")
+        }
     }
 
     shadowJar {
