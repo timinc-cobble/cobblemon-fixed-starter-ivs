@@ -1,8 +1,7 @@
 plugins {
     id("java")
     id("java-library")
-    kotlin("jvm") version("2.2.21")
-
+    kotlin("jvm") version("2.4.0")
     id("dev.architectury.loom") version("1.11-SNAPSHOT") apply false
     id("architectury-plugin") version("3.4-SNAPSHOT") apply false
 }
@@ -16,8 +15,7 @@ allprojects {
 
     repositories {
         mavenCentral()
-        maven("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
-        maven("https://maven.impactdev.net/repository/development/")
+        maven("https://artefacts.cobblemon.com/releases")
         maven("https://maven.neoforged.net/releases")
         maven("https://thedarkcolour.github.io/KotlinForForge/")
         maven("https://api.modrinth.com/maven")
@@ -31,4 +29,3 @@ allprojects {
         withSourcesJar()
     }
 }
-

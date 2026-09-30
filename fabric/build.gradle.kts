@@ -1,7 +1,7 @@
 plugins {
+    id("com.gradleup.shadow") version("9.2.2")
     id("dev.architectury.loom")
     id("architectury-plugin")
-    id("com.gradleup.shadow") version("9.2.2")
 }
 
 architectury {
@@ -17,23 +17,36 @@ loom {
         defaultRefmapName.set("mixins.${project.name}.refmap.json")
     }
 }
-val shadowCommon = configurations.create("shadowCommon")
+val shadowBundle = configurations.create("shadowBundle") {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
 
 dependencies {
     minecraft("com.mojang:minecraft:${property("minecraft_version")}")
     mappings(loom.officialMojangMappings())
-    modImplementation("net.fabricmc:fabric-loader:${property("fabric_loader_version")}")
 
-    modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")
-    modImplementation(fabricApi.module("fabric-command-api-v2", property("fabric_api_version").toString()))
+    modRuntimeOnly("org.graalvm.js:js:${property("graalvm_version")}")
+    modRuntimeOnly("org.graalvm.sdk:graal-sdk:${property("graalvm_version")}")
+    modRuntimeOnly("org.graalvm.regex:regex:${property("graalvm_version")}")
+    modRuntimeOnly("org.graalvm.truffle:truffle-api:${property("graalvm_version")}")
+
+    @Suppress("AvoidDuplicateDependencies")
+    "com.ibm.icu:icu4j:${property("icu4j_version")}".let {
+        modRuntimeOnly(it)
+        minecraftServerLibraries(it)
+    }
+
+    modImplementation("net.fabricmc:fabric-loader:${property("fabric_loader_version")}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")
 
     //needed for cobblemon
-    modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin")}")
+    modImplementation("net.fabricmc:fabric-language-kotlin:${property("fabric_kotlin_version")}")
     modImplementation("com.cobblemon:fabric:${property("cobblemon_version")}") { isTransitive = false }
 
     implementation(project(":common", configuration = "namedElements"))
     "developmentFabric"(project(":common", configuration = "namedElements"))
-    shadowCommon(project(":common", configuration = "transformProductionFabric"))
+    shadowBundle(project(":common", configuration = "transformProductionFabric"))
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${property("junit_version")}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${property("junit_version")}")
@@ -49,6 +62,7 @@ tasks.processResources {
     inputs.property("version", project.version)
 
     filesMatching("fabric.mod.json") {
+        @Suppress("DEPRECATION", "We'll think about it when gradle 10 happens")
         expand(project.properties)
     }
 
@@ -64,7 +78,7 @@ tasks {
     shadowJar {
         archiveClassifier.set("dev-shadow")
         archiveBaseName.set("${rootProject.property("archives_base_name")}-${project.name}")
-        configurations = listOf(shadowCommon)
+        configurations = listOf(shadowBundle)
     }
 
     remapJar {
